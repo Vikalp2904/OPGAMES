@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Birthday Website Prompt Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-focus-border: rgba(168, 85, 247, 0.4);
+            --accent-gradient: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: #f8fafc;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        /* Glassmorphism Card Styling */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+            .glass-card:hover {
+                border-color: rgba(255, 255, 255, 0.15);
+                box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+            }
+
+        .card-header-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #e2e8f0;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* Header Accent Grid */
+        .gradient-header {
+            background: linear-gradient(180deg, rgba(168, 85, 247, 0.15) 0%, rgba(0,0,0,0) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 24px 24px;
+        }
+
+        .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* Form Controls styling */
+        .form-label {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+        }
+
+        .form-control, .form-select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            color: #f8fafc;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                background: rgba(15, 23, 42, 0.8);
+                border-color: #a855f7;
+                color: #f8fafc;
+                box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25);
+            }
+
+            .form-control::placeholder {
+                color: #64748b;
+            }
+
+        /* Form Check / Checkboxes */
+        .form-check-input {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+        }
+
+            .form-check-input:checked {
+                background-color: #a855f7;
+                border-color: #a855f7;
+            }
+
+        .form-check-label {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            cursor: pointer;
+        }
+
+        /* Color Picker Wrappers */
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-control-color {
+            width: 45px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+        }
+
+        /* Sticky Action Bar styling */
+        .sticky-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 15px 0;
+            z-index: 1030;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        .btn-gradient {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .btn-gradient:hover {
+                opacity: 0.9;
+                color: white;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+            }
+
+        .btn-glass {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid var(--glass-border);
+            color: #f8fafc;
+            font-weight: 500;
+        }
+
+            .btn-glass:hover {
+                background: rgba(255,255,255,0.15);
+                color: #fff;
+                border-color: rgba(255,255,255,0.3);
+            }
+
+        /* Validation UI corrections */
+        .was-validated .form-control:invalid, .was-validated .form-select:invalid {
+            border-color: #ef4444;
+            background-image: none;
+        }
+
+        .was-validated .form-control:valid, .was-validated .form-select:valid {
+            border-color: #22c55e;
+            background-image: none;
+        }
+
+        .invalid-feedback {
+            color: #f87171;
+            font-size: 0.8rem;
+        }
+
+        /* Textarea handling output layout */
+        .output-textarea {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            background: rgba(10, 15, 30, 0.8) !important;
+            color: #38bdf8 !important;
+            resize: vertical;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #475569;
+            }
+    </style>
+</head>
+<body>
+
+    <header class="gradient-header text-center">
+        <div class="container">
+            <h1 class="display-5 fw-bold mb-2"><span class="gradient-text">🎂 AI Birthday Website Prompt Generator</span></h1>
+            <p class="text-muted fs-5 mb-0">Generate deeply tailored, professional production-grade prompts for cutting-edge AI models.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <form id="promptForm" class="needs-validation" novalidate>
+            <div class="row g-4">
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-person-heart text-purple"></i> Card 1 - Birthday Information
+                        </div>
+                        <div class="mb-3">
+                            <label for="bgName" class="form-label">Birthday Person Name *</label>
+                            <input type="text" class="form-control" id="bgName" placeholder="e.g. John Doe" required>
+                            <div class="invalid-feedback">Please enter the birthday person's name.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bgNickname" class="form-label">Nick Name</label>
+                            <input type="text" class="form-control" id="bgNickname" placeholder="e.g. Johnny">
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label for="bgAge" class="form-label">Age *</label>
+                                <input type="number" class="form-control" id="bgAge" placeholder="e.g. 25" required min="0">
+                                <div class="invalid-feedback">Valid age is required.</div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label for="bgGender" class="form-label">Gender</label>
+                                <select class="form-select" id="bgGender">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Non-Binary">Non-Binary</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="bgDob" class="form-label">Date of Birth *</label>
+                            <input type="date" class="form-control" id="bgDob" required>
+                            <div class="invalid-feedback">Date of birth is required.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-calendar-event"></i> Card 2 - Event Details
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventDate" class="form-label">Event Date *</label>
+                            <input type="date" class="form-control" id="eventDate" required>
+                            <div class="invalid-feedback">Event date is required.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventTime" class="form-label">Event Time</label>
+                            <input type="time" class="form-control" id="eventTime" value="19:00">
+                        </div>
+                        <div class="mb-3">
+                            <label for="venueName" class="form-label">Venue Name *</label>
+                            <input type="text" class="form-control" id="venueName" placeholder="e.g. Grand Plaza Resort" required>
+                            <div class="invalid-feedback">Venue name is required.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="venueAddress" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="venueAddress" placeholder="Full address details">
+                        </div>
+                        <div>
+                            <label for="mapUrl" class="form-label">Google Map URL</label>
+                            <input type="url" class="form-control" id="mapUrl" placeholder="https://maps.google.com/...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-palette"></i> Card 3 - Theme & Visuals
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label for="themeSelect" class="form-label">Theme</label>
+                                <select class="form-select" id="themeSelect">
+                                    <option value="Futuristic">Futuristic</option>
+                                    <option value="Luxury" selected>Luxury</option>
+                                    <option value="Royal">Royal</option>
+                                    <option value="Minimal">Minimal</option>
+                                    <option value="Cyberpunk">Cyberpunk</option>
+                                    <option value="Neon">Neon</option>
+                                    <option value="Galaxy">Galaxy</option>
+                                    <option value="Space">Space</option>
+                                    <option value="Floral">Floral</option>
+                                    <option value="Princess">Princess</option>
+                                    <option value="Super Hero">Super Hero</option>
+                                    <option value="Anime">Anime</option>
+                                    <option value="Marvel">Marvel</option>
+                                    <option value="Barbie">Barbie</option>
+                                    <option value="Bollywood">Bollywood</option>
+                                    <option value="Retro">Retro</option>
+                                    <option value="Custom">Custom Theme</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label for="designStyle" class="form-label">Design Style</label>
+                                <select class="form-select" id="designStyle">
+                                    <option value="Modern" selected>Modern</option>
+                                    <option value="Glassmorphism">Glassmorphism</option>
+                                    <option value="Neumorphism">Neumorphism</option>
+                                    <option value="Material">Material</option>
+                                    <option value="3D">3D Layouts</option>
+                                    <option value="Premium">Premium</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bgStyle" class="form-label">Background Style</label>
+                            <select class="form-select" id="bgStyle">
+                                <option value="Static">Static Complex Background</option>
+                                <option value="Animated Gradient" selected>Animated Gradient</option>
+                                <option value="Video">Video Background Container</option>
+                                <option value="Particles">Interactive Canvas Particles</option>
+                                <option value="Space">Parallax Space Cosmos</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="form-label">Primary</label>
+                                <div class="color-picker-wrapper">
+                                    <input type="color" class="form-control form-control-color" id="primaryColor" value="#a855f7">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label">Secondary</label>
+                                <div class="color-picker-wrapper">
+                                    <input type="color" class="form-control form-control-color" id="secondaryColor" value="#ec4899">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label">Accent</label>
+                                <div class="color-picker-wrapper">
+                                    <input type="color" class="form-control form-control-color" id="accentColor" value="#3b82f6">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-magic"></i> Card 4 - Core Features
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fCountdown" checked><label class="form-check-label" for="fCountdown">Countdown</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fFireworks" checked><label class="form-check-label" for="fFireworks">Fireworks</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fConfetti" checked><label class="form-check-label" for="fConfetti">Confetti</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fBalloons" checked><label class="form-check-label" for="fBalloons">Balloons</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fHearts"><label class="form-check-label" for="fHearts">Hearts</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fStars"><label class="form-check-label" for="fStars">Stars</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fMusic" checked><label class="form-check-label" for="fMusic">Music Player</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fAutoplay"><label class="form-check-label" for="fAutoplay">Autoplay Audio</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fScrollAnim" checked><label class="form-check-label" for="fScrollAnim">Scroll FX</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fDark"><label class="form-check-label" for="fDark">Dark Mode Toggle</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fLight"><label class="form-check-label" for="fLight">Light Mode Toggle</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="fLoading" checked><label class="form-check-label" for="fLoading">Loader Screen</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-layers-half"></i> Card 5 - Page Sections
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sHero" checked><label class="form-check-label" for="sHero">Hero Banner</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sAbout" checked><label class="form-check-label" for="sAbout">About Text</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sGallery" checked><label class="form-check-label" for="sGallery">Photo Gallery</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sTimeline"><label class="form-check-label" for="sTimeline">Life Timeline</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sSchedule" checked><label class="form-check-label" for="sSchedule">Event Schedule</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sVenue" checked><label class="form-check-label" for="sVenue">Venue Container</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sGMap" checked><label class="form-check-label" for="sGMap">Google Map Embed</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sRSVP" checked><label class="form-check-label" for="sRSVP">RSVP Form</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sGift" checked><label class="form-check-label" for="sGift">Gift Register</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sDress" checked><label class="form-check-label" for="sDress">Dress Code Info</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sFamily"><label class="form-check-label" for="sFamily">Family Section</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sFriends"><label class="form-check-label" for="sFriends">Friends Wishes</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sCountdownSec" checked><label class="form-check-label" for="sCountdownSec">Countdown Section</label></div>
+                                <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="sFaq"><label class="form-check-label" for="sFaq">FAQ Section</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-music-note-beamed"></i> Card 6 - Music Settings
+                        </div>
+                        <div class="mb-3">
+                            <label for="musicType" class="form-label">Audio Vibe Track</label>
+                            <select class="form-select" id="musicType">
+                                <option value="Happy Birthday">Happy Birthday Classic</option>
+                                <option value="Piano" selected>Elegant Piano Ambient</option>
+                                <option value="Instrumental">Cinematic Instrumental</option>
+                                <option value="EDM">Upbeat Party EDM</option>
+                                <option value="Bollywood">Energetic Bollywood Remix</option>
+                                <option value="Romantic">Soft Romantic Theme</option>
+                                <option value="No Music">Silent Mode (No Audio)</option>
+                                <option value="Custom Music URL">External Custom Audio URL Stream</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="musicUrl" class="form-label">Custom Music URL</label>
+                            <input type="url" class="form-control" id="musicUrl" placeholder="https://domain.com/track.mp3">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-gift"></i> Card 7 - Gift Registry
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="showGiftSection" checked>
+                            <label class="form-check-label" for="showGiftSection">Enable Gift Section Layout</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="upiId" class="form-label">UPI ID</label>
+                            <input type="text" class="form-control" id="upiId" placeholder="e.g. name@upi">
+                        </div>
+                        <div class="mb-3">
+                            <label for="qrCodeUrl" class="form-label">QR Code Image URL</label>
+                            <input type="url" class="form-control" id="qrCodeUrl" placeholder="https://link-to-qr-image.png">
+                        </div>
+                        <div>
+                            <label for="wishlistUrl" class="form-label">Amazon Wishlist URL</label>
+                            <input type="url" class="form-control" id="wishlistUrl" placeholder="https://amazon.in/wishlist/...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-telephone"></i> Card 8 - Contact Information
+                        </div>
+                        <div class="mb-3">
+                            <label for="hostName" class="form-label">Host Name</label>
+                            <input type="text" class="form-control" id="hostName" placeholder="e.g. Smith Family">
+                        </div>
+                        <div class="mb-3">
+                            <label for="hostPhone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="hostPhone" placeholder="+1234567890">
+                        </div>
+                        <div class="mb-3">
+                            <label for="hostWhatsapp" class="form-label">WhatsApp Link/Number</label>
+                            <input type="text" class="form-control" id="hostWhatsapp" placeholder="+1234567890">
+                        </div>
+                        <div>
+                            <label for="hostEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="hostEmail" placeholder="host@example.com">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-clipboard-check"></i> Card 9 - RSVP Form Settings
+                        </div>
+                        <div class="mb-3">
+                            <label for="rsvpDeadline" class="form-label">RSVP Deadline</label>
+                            <input type="date" class="form-control" id="rsvpDeadline">
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="rsvpAllowYesNo" checked>
+                            <label class="form-check-label" for="rsvpAllowYesNo">Allow Attendance Inputs (Yes/No)</label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="rsvpAllowGuestCount" checked>
+                            <label class="form-check-label" for="rsvpAllowGuestCount">Allow Selecting Additional Guest Count</label>
+                        </div>
+                        <div>
+                            <label for="rsvpMaxGuests" class="form-label">Maximum Allowed Guests per Ticket</label>
+                            <input type="number" class="form-control" id="rsvpMaxGuests" value="5" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-share"></i> Card 10 - Social Ecosystem Links
+                        </div>
+                        <div class="mb-3">
+                            <label for="smInstagram" class="form-label">Instagram Profile Handle</label>
+                            <input type="text" class="form-control" id="smInstagram" placeholder="@username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="smFacebook" class="form-label">Facebook Profile Link</label>
+                            <input type="url" class="form-control" id="smFacebook" placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="smYoutube" class="form-label">YouTube Event Promo Video URL</label>
+                            <input type="url" class="form-control" id="smYoutube" placeholder="https://youtube.com/...">
+                        </div>
+                        <div>
+                            <label for="smWebsite" class="form-label">Additional Website Context Portfolio</label>
+                            <input type="url" class="form-control" id="smWebsite" placeholder="https://domain.com">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-cpu"></i> Card 11 - Output Targets
+                        </div>
+                        <div class="mb-3">
+                            <label for="outputType" class="form-label">Architecture Target Format</label>
+                            <select class="form-select" id="outputType">
+                                <option value="Single HTML File Component Container">Single HTML File</option>
+                                <option value="HTML + Extracted Scoped Modular CSS">HTML + CSS</option>
+                                <option value="HTML + Functional Vanilla JavaScript Systems">HTML + JavaScript</option>
+                                <option value="React Functional Component Architecture Container">React</option>
+                                <option value="React Functional Component + Atomic Tailwind CSS Framework">React + Tailwind</option>
+                                <option value="Vue Composition API Production Standard View Template">Vue</option>
+                                <option value="Next.js App Router Clean Structural Dynamic Components">Next.js</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="aiModel" class="form-label">Target Engine Optimization Model</label>
+                            <select class="form-select" id="aiModel">
+                                <option value="ChatGPT (GPT-4o Engine Framework Architecture Layer)">ChatGPT</option>
+                                <option value="Claude (Claude 3.5 Sonnet Comprehensive Engineering Engine)">Claude</option>
+                                <option value="Gemini (Gemini 1.5 Pro Advanced Logical Ecosystem)">Gemini</option>
+                                <option value="Grok (Grok Functional Deep Architecture Stack Matrix)">Grok</option>
+                                <option value="DeepSeek (DeepSeek V3 Advanced Coding Model)">DeepSeek</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card glass-card p-4">
+                        <div class="card-header-title">
+                            <i class="bi bi-file-earmark-plus"></i> Card 12 - Extra Custom Directives
+                        </div>
+                        <div class="h-100 pb-2">
+                            <label for="extraRequirements" class="form-label">Inject Specific Custom Prompt Guidelines</label>
+                            <textarea class="form-control" id="extraRequirements" rows="5" placeholder="Add custom criteria (e.g. Include a hidden audio easter egg if the user clicks the profile photo, make the RSVP submit directly to a specific webhook url system, etc...)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+        <section class="mt-5 mb-5">
+            <div class="card glass-card p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-terminal-box text-info fs-4"></i>
+                        <h2 class="h5 mb-0 fw-bold">Card 13 - Master Engineered Production AI Prompt Ready</h2>
+                    </div>
+                    <div class="btn-group shadow-sm">
+                        <button type="button" class="btn btn-sm btn-glass text-warning" onclick="resetForm()"><i class="bi bi-arrow-counterclockwise me-1"></i> Reset</button>
+                        <button type="button" class="btn btn-sm btn-glass" onclick="downloadTxt()"><i class="bi bi-filetype-txt me-1"></i> TXT</button>
+                        <button type="button" class="btn btn-sm btn-glass" onclick="downloadJson()"><i class="bi bi-filetype-json me-1"></i> JSON</button>
+                    </div>
+                </div>
+                <textarea class="form-control output-textarea" id="outputArea" rows="15" readonly placeholder="Fill out all necessary parameters above and hit 'Generate Prompt Pipeline' below to output highly explicit directives..."></textarea>
+            </div>
+        </section>
+    </main>
+
+    <div class="sticky-action-bar">
+        <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+            <span class="text-muted small text-center text-sm-start d-none d-md-inline"><i class="bi bi-info-circle me-1 text-info"></i> Validates parameters natively inside client browser environment runtime to avoid data degradation issues.</span>
+            <div class="d-flex gap-3 w-100 justify-content-sm-end justify-content-center">
+                <button type="button" class="btn btn-glass px-4 py-2" onclick="copyToClipboard()"><i class="bi bi-copy me-2"></i> Copy Prompt</button>
+                <button type="button" class="btn btn-gradient px-5 py-2 fs-6" onclick="generatePrompt()"><i class="bi bi-lightning-charge-fill me-2"></i> Generate Prompt</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // System Template Matrix Declaration
+        const MASTER_PROMPT_TEMPLATE = `System Directive Profile: Act as an expert frontend engineer, UX design architect, and senior creative designer. Your absolute mission is to write a production-grade, pixel-perfect, highly responsive, stunning Premium Event Invitation Website specialized for a celebratory event using the target blueprint structured below.
+
+Target AI Processing Model Target System Optimization: {{AI_MODEL}}
+Architecture Code Output Standard: {{OUTPUT_TYPE}}
+
+=======================================
+1. STRUCTURAL PROFILE MODEL BLUEPRINT
+=======================================
+- Primary Subject Honoree: {{NAME}}
+- Casual Nickname Alias: {{NICKNAME}}
+- Target Celebrated Age: {{AGE}}
+- Subject Gender Classification: {{GENDER}}
+- Historical Date of Birth Profile: {{DOB}}
+
+=======================================
+2. TEMPORAL & LOGISTICAL INFRASTRUCTURE
+=======================================
+- Target Event Execution Date: {{EVENT_DATE}}
+- Official Event Commencing Time: {{EVENT_TIME}}
+- Designated Location Venue Name: {{VENUE}}
+- Complete Spatial Geographic Address: {{ADDRESS}}
+- Geographic Coordination Navigation Link: {{MAP_URL}}
+
+=======================================
+3. VISUAL LAYOUT THEMATIC PALETTE & ARCHITECTURE STYLE
+=======================================
+- Visual Theme Blueprint Concept: {{THEME}}
+- UI Core Paradigm Architecture System Design: {{STYLE}}
+- Structural Background Canvas Mode Paradigm: {{BACKGROUND_STYLE}}
+- Hex Color Standard Coordinates Matrix:
+  * Principal Primary Brand Tone Accent: {{PRIMARY_COLOR}}
+  * Companion Supporting Secondary Tone Accent: {{SECONDARY_COLOR}}
+  * Interactive Accent Highlight Focus Coordinates: {{ACCENT_COLOR}}
+
+=======================================
+4. SELECTED FUNCTIONAL SYSTEM FEATURES MODAL PARADIGMS
+=======================================
+The codebase execution loop must structurally implement explicit modules tracking these exact states:
+{{FEATURES_LIST}}
+
+=======================================
+5. REQUIRED VISUAL LAYOUT CONTAINER COMPONENT SECTIONS
+=======================================
+Inject the following explicit block components sequentially optimized for view state viewport rendering:
+{{SECTIONS_LIST}}
+
+=======================================
+6. AUDIO ENGINE ENVIRONMENT BLUEPRINT
+=======================================
+- Audio Streaming Vibe Selection Profile: {{MUSIC_TYPE}}
+- Explicit Dedicated Audio Source Target URL Endpoint: {{MUSIC_URL}}
+
+=======================================
+7. FINANCIAL GIFT REGISTRY LOGISTICS
+=======================================
+- Render Registry System Layout Component: {{SHOW_GIFT}}
+- Banking Unified Payments Interface (UPI) System String ID Pointer: {{UPI_ID}}
+- QR Code Direct Image File Resource Endpoint Link: {{QR_CODE_URL}}
+- Direct Merchant E-Commerce Wishlist Access Path URL: {{WISHLIST_URL}}
+
+=======================================
+8. RECOGNIZED SYSTEM COORDINATOR HOST DETAILS
+=======================================
+- Designated Primary Event Organizing Coordinator Body Name: {{HOST_NAME}}
+- Direct Telecom Inbound Voice Link Channel: {{HOST_PHONE}}
+- Operational Encrypted WhatsApp Instant Messaging API Core Link: {{HOST_WHATSAPP}}
+- Electronic Mail Contact Mailto Dispatch Box Endpoint Address: {{HOST_EMAIL}}
+
+=======================================
+9. INBOUND RSVP ATTENDANCE CAPTURE PARADIGMS
+=======================================
+- Final Legal Cut-off Registration Timeline Boundary Limit: {{RSVP_DEADLINE}}
+- Support Binary Absolute (Attending/Declining) Choice Modules: {{RSVP_YES_NO}}
+- Capture Specific Numeric Guest Matrix Volumetric Fields: {{RSVP_GUEST_COUNT}}
+- Upper Absolute Mathematical Upper Boundary Allocation Constraint Check limit per entry: {{RSVP_MAX_GUESTS}}
+
+=======================================
+10. EXTERNAL INTERNET SOCIAL ECOSYSTEM POINTER DIRECTORY
+=======================================
+- Instagram Handle Target Anchor: {{SM_INSTAGRAM}}
+- Facebook Event Core Profile Anchor Link: {{SM_FACEBOOK}}
+- Video Broadcast Promo Resource Engine Frame link: {{SM_YOUTUBE}}
+- Global Parent Portfolio Web URL Resource Address: {{SM_WEBSITE}}
+
+=======================================
+11. ADDITIONAL INJECTED EXTRA USER DIRECTIVES
+=======================================
+{{EXTRA_REQUIREMENTS}}
+
+=======================================
+12. CRITICAL ARCHITECTURAL CONSTRAINTS & REQUIREMENTS
+=======================================
+- Complete Standalone Capability: All required structural layouts, visual transitions, animation timing algorithms, canvas calculations, tracking vectors, responsive view optimizations, and event behaviors must be fully written in line within the framework requested. Avoid code placeholder truncation omissions or leaving comments like '// add your logic here'.
+- Exquisite Visual Design UX: Utilize modern design techniques. Ensure typography features exceptional readability using premium weights. Maintain ideal structural spacing patterns, responsive elastic layout paddings, sleek glass boundaries using subtle backdrops, and glowing elements synced to the selected color palette vectors.
+- Error-Free JavaScript Runtime: Implement precise interactive UI event behaviors including smooth viewport scrolling anchors, active logic countdown modules verifying operational accuracy against the specified target timelines, and animated elements that render correctly on both desktop viewports and mobile screens.
+
+Provide the complete production source file executing all options precisely matching this blueprint.`;
+
+        // Execution Matrix Engine Function
+        function generatePrompt() {
+            const form = document.getElementById('promptForm');
+
+            // Invoke native Bootstrap Form validation UI layer checks
+            form.classList.add('was-validated');
+
+            if (!form.checkValidity()) {
+                // Focus the first invalid element automatically to improve user experience
+                const firstInvalid = form.querySelector(':invalid');
+                if (firstInvalid) firstInvalid.focus();
+
+                // Present standard alert interface feedback
+                alert('Validation Alert: Please ensure all required form fields marked with an asterisk (*) are filled out correctly before processing execution.');
+                return;
+            }
+
+            // Read checkbox list components array builders helper function
+            function getCheckedList(elementsIdsMap) {
+                let items = [];
+                for (const [id, label] of Object.entries(elementsIdsMap)) {
+                    if (document.getElementById(id).checked) {
+                        items.push(`  * [ENABLED REQUIREMENT COMPONENT] - True: Structural Target Model maps to active features: ${label}`);
+                    } else {
+                        items.push(`  * [DISABLED COMPONENT OPTION] - False: Do not implement structural elements mapping to option feature: ${label}`);
+                    }
+                }
+                return items.join('\n');
+            }
+
+            // Map UI features IDs
+            const coreFeaturesMap = {
+                'fCountdown': 'Interactive Real-Time Chronometer Countdown Clock Engine Module',
+                'fFireworks': 'Dynamic HTML5 Canvas Particle Blast Burst Fireworks Simulation Effects',
+                'fConfetti': 'Automated On-Load Screen Spray Vector Color Confetti Ribbon Falling Canvas FX',
+                'fBalloons': 'Floating Floating Colorful Helium Balloon UI Vector Elements drifting up on view layer',
+                'fHearts': 'Floating Floating Heart Vector Shape FX drifting up across screen container spaces',
+                'fStars': 'Background Twinkling Luminous Vector CSS Particle Star Field Sky System Layer',
+                'fMusic': 'Interactive Media Audio Custom Player Dashboard Component HUD Box with Control Toggles',
+                'fAutoplay': 'Autoplay Audio Playback Execution Trigger Immediately on Interaction Init Sequence',
+                'fScrollAnim': 'In-View Scroll Intersection Reveal Structural Motion Animations (Scroll Animation)',
+                'fDark': 'Global Dynamic Layout Dark Contrast Mode Color Theme State System Toggle Switch Controller',
+                'fLight': 'Global Dynamic Layout Light Contrast Mode Color Theme State System Toggle Switch Controller',
+                'fLoading': 'Preloader Screen Overlay Animation displaying matching progress graphic layout before core reveal'
+            };
+
+            // Map UI Page Sections IDs
+            const pageSectionsMap = {
+                'sHero': 'Immersive Hero Banner Layout showcasing Subject Name, Profile Header Image Mockups, and Big Core Title Card',
+                'sAbout': 'Creative Detailed Personal Biography/Story Description About Section with contextual typography layouts',
+                'sGallery': 'Fluid Modern Photo Grid Lightbox Gallery container holding structural presentation element blocks',
+                'sTimeline': 'Chronological Event Milestone Vertical Life Track Story Presentation Layout Component (Timeline)',
+                'sSchedule': 'Structured Detailed Multi-Stage Event Program Agenda Sequence Schedule timeline tracking hours',
+                'sVenue': 'Dedicated Event Space Venue presentation containing addresses, transport guidelines, and location data blocks',
+                'sGMap': 'Inline Responsive Embedded Active Google Maps iFrame Geo Location Interactive Container Module Layout',
+                'sRSVP': 'Interactive Functional RSVP Registration Form capturing user response parameters seamlessly',
+                'sGift': 'Dedicated Financial Gift Register Section highlighting scanning patterns, payment data, and digital ledger endpoints',
+                'sDress': 'Dress Code Theme Contextual Info Section instructing invitees on aesthetic dress color styling guidelines',
+                'sFamily': 'Honored Core Family Tree Network Profiles Grid displaying names and relationships maps explicitly',
+                'sFriends': 'Best Wishes Guestbook Comments Scroll Grid displaying notes left by close friend groups',
+                'sCountdownSec': 'Dedicated Large Focal Point Countdown Clock Container Grid Section separating sections',
+                'sFaq': 'Accordion Dropdown FAQ Module answering common guest queries regarding accommodation and logistics'
+            };
+
+            // Read variables values directly out from the standard DOM state elements
+            let promptText = MASTER_PROMPT_TEMPLATE;
+
+            promptText = promptText.replace('{{AI_MODEL}}', document.getElementById('aiModel').value);
+            promptText = promptText.replace('{{OUTPUT_TYPE}}', document.getElementById('outputType').value);
+
+            promptText = promptText.replace('{{NAME}}', document.getElementById('bgName').value || 'N/A');
+            promptText = promptText.replace('{{NICKNAME}}', document.getElementById('bgNickname').value || 'None specified');
+            promptText = promptText.replace('{{AGE}}', document.getElementById('bgAge').value || 'N/A');
+            promptText = promptText.replace('{{GENDER}}', document.getElementById('bgGender').value);
+            promptText = promptText.replace('{{DOB}}', document.getElementById('bgDob').value || 'N/A');
+
+            promptText = promptText.replace('{{EVENT_DATE}}', document.getElementById('eventDate').value || 'N/A');
+            promptText = promptText.replace('{{EVENT_TIME}}', document.getElementById('eventTime').value || 'N/A');
+            promptText = promptText.replace('{{VENUE}}', document.getElementById('venueName').value || 'N/A');
+            promptText = promptText.replace('{{ADDRESS}}', document.getElementById('venueAddress').value || 'None specified');
+            promptText = promptText.replace('{{MAP_URL}}', document.getElementById('mapUrl').value || 'None specified');
+
+            promptText = promptText.replace('{{THEME}}', document.getElementById('themeSelect').value);
+            promptText = promptText.replace('{{STYLE}}', document.getElementById('designStyle').value);
+            promptText = promptText.replace('{{BACKGROUND_STYLE}}', document.getElementById('bgStyle').value);
+            promptText = promptText.replace('{{PRIMARY_COLOR}}', document.getElementById('primaryColor').value);
+            promptText = promptText.replace('{{SECONDARY_COLOR}}', document.getElementById('secondaryColor').value);
+            promptText = promptText.replace('{{ACCENT_COLOR}}', document.getElementById('accentColor').value);
+
+            promptText = promptText.replace('{{FEATURES_LIST}}', getCheckedList(coreFeaturesMap));
+            promptText = promptText.replace('{{SECTIONS_LIST}}', getCheckedList(pageSectionsMap));
+
+            promptText = promptText.replace('{{MUSIC_TYPE}}', document.getElementById('musicType').value);
+            promptText = promptText.replace('{{MUSIC_URL}}', document.getElementById('musicUrl').value || 'None specified');
+
+            promptText = promptText.replace('{{SHOW_GIFT}}', document.getElementById('showGiftSection').checked ? 'True (Visible Engine Framework)' : 'False (Skip Module Entirely)');
+            promptText = promptText.replace('{{UPI_ID}}', document.getElementById('upiId').value || 'None specified');
+            promptText = promptText.replace('{{QR_CODE_URL}}', document.getElementById('qrCodeUrl').value || 'None specified');
+            promptText = promptText.replace('{{WISHLIST_URL}}', document.getElementById('wishlistUrl').value || 'None specified');
+
+            promptText = promptText.replace('{{HOST_NAME}}', document.getElementById('hostName').value || 'None specified');
+            promptText = promptText.replace('{{HOST_PHONE}}', document.getElementById('hostPhone').value || 'None specified');
+            promptText = promptText.replace('{{HOST_WHATSAPP}}', document.getElementById('hostWhatsapp').value || 'None specified');
+            promptText = promptText.replace('{{HOST_EMAIL}}', document.getElementById('hostEmail').value || 'None specified');
+
+            promptText = promptText.replace('{{RSVP_DEADLINE}}', document.getElementById('rsvpDeadline').value || 'No strict date limit set');
+            promptText = promptText.replace('{{RSVP_YES_NO}}', document.getElementById('rsvpAllowYesNo').checked ? 'Enabled attendance toggle switches' : 'Disabled');
+            promptText = promptText.replace('{{RSVP_GUEST_COUNT}}', document.getElementById('rsvpAllowGuestCount').checked ? 'Enabled multi-guest selection capability input fields' : 'Disabled');
+            promptText = promptText.replace('{{RSVP_MAX_GUESTS}}', document.getElementById('rsvpMaxGuests').value);
+
+            promptText = promptText.replace('{{SM_INSTAGRAM}}', document.getElementById('smInstagram').value || 'None specified');
+            promptText = promptText.replace('{{SM_FACEBOOK}}', document.getElementById('smFacebook').value || 'None specified');
+            promptText = promptText.replace('{{SM_YOUTUBE}}', document.getElementById('smYoutube').value || 'None specified');
+            promptText = promptText.replace('{{SM_WEBSITE}}', document.getElementById('smWebsite').value || 'None specified');
+
+            const extraContent = document.getElementById('extraRequirements').value.trim();
+            promptText = promptText.replace('{{EXTRA_REQUIREMENTS}}', extraContent ? extraContent : '  * No supplemental manual custom criteria was requested by prompt operator payload.');
+
+            // Write output direct into UI textarea frame viewports
+            const outputArea = document.getElementById('outputArea');
+            outputArea.value = promptText;
+
+            // Smoothly auto-scroll layout directly downward to emphasize the generation results
+            outputArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Action Command Helper Utilities
+        function copyToClipboard() {
+            const outputArea = document.getElementById('outputArea');
+            if (!outputArea.value) {
+                alert('Operation Aborted: The prompt workspace is entirely blank. Fill forms and click Generate first.');
+                return;
+            }
+            navigator.clipboard.writeText(outputArea.value)
+                .then(() => alert('Success: Engineered Master Prompt copied to system clipboard environment safely.'))
+                .catch(() => alert('Critical Error: Failed attempting programmatic clipboard write action sequence. Copy manually.'));
+        }
+
+        function resetForm() {
+            if (confirm('Are you absolutely certain you wish to reset all parameter fields back to initial layout factory defaults?')) {
+                document.getElementById('promptForm').reset();
+                document.getElementById('promptForm').classList.remove('was-validated');
+                document.getElementById('outputArea').value = '';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function downloadTxt() {
+            const data = document.getElementById('outputArea').value;
+            if (!data) return alert('No active content prompt payload loaded to download.');
+
+            const namePointer = document.getElementById('bgName').value.replace(/\s+/g, '_') || 'Birthday';
+            const blob = new Blob([data], { type: 'text/plain;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `AI_Birthday_Prompt_${namePointer}.txt`;
+            link.click();
+        }
+
+        function downloadJson() {
+            const outputVal = document.getElementById('outputArea').value;
+            if (!outputVal) return alert('No active content prompt payload loaded to export configuration payload.');
+
+            let configObject = {
+                generatorIdentity: "AI Birthday Website Prompt Generator Engine V1",
+                timestampSignature: new Date().toISOString(),
+                payloadPromptBodyText: outputVal,
+                formInternalStateMetadata: {
+                    name: document.getElementById('bgName').value,
+                    age: document.getElementById('bgAge').value,
+                    theme: document.getElementById('themeSelect').value,
+                    style: document.getElementById('designStyle').value,
+                    aiOptimizationTargetModel: document.getElementById('aiModel').value
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(configObject, null, 4)], { type: 'application/json;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Birthday_Prompt_Package_${configObject.formInternalStateMetadata.name || 'Export'}.json`;
+            link.click();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

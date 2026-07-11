@@ -606,7 +606,7 @@
                 <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-terminal-box text-info fs-4"></i>
-                        <h2 class="h5 mb-0 fw-bold">Card 13 - Master Engineered Production AI Prompt Ready</h2>
+                        <h2 class="text-muted h5 mb-0 fw-bold">Card 13 - Master Engineered Production AI Prompt Ready</h2>
                     </div>
                     <div class="btn-group shadow-sm">
                         <button type="button" class="btn btn-sm btn-glass text-warning" onclick="resetForm()"><i class="bi bi-arrow-counterclockwise me-1"></i> Reset</button>
@@ -854,19 +854,39 @@ Provide the complete production source file executing all options precisely matc
             // Smoothly auto-scroll layout directly downward to emphasize the generation results
             outputArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+function copyToClipboard() {
+    const outputArea = document.getElementById("outputArea");
 
-        // Action Command Helper Utilities
-        function copyToClipboard() {
-            const outputArea = document.getElementById('outputArea');
-            if (!outputArea.value) {
-                alert('Operation Aborted: The prompt workspace is entirely blank. Fill forms and click Generate first.');
-                return;
-            }
-            navigator.clipboard.writeText(outputArea.value)
-                .then(() => alert('Success: Engineered Master Prompt copied to system clipboard environment safely.'))
-                .catch(() => alert('Critical Error: Failed attempting programmatic clipboard write action sequence. Copy manually.'));
-        }
+    if (!outputArea.value) {
+        alert("Operation Aborted: The prompt workspace is entirely blank.");
+        return;
+    }
 
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(outputArea.value)
+            .then(() => {
+                alert("Copied successfully!");
+            })
+            .catch(err => {
+                console.error(err);
+                fallbackCopy(outputArea);
+            });
+    } else {
+        fallbackCopy(outputArea);
+    }
+}
+
+function fallbackCopy(outputArea) {
+    outputArea.select();
+    outputArea.setSelectionRange(0, 999999);
+
+    try {
+        document.execCommand("copy");
+        alert("Copied successfully!");
+    } catch (err) {
+        alert("Copy failed. Please copy manually.");
+    }
+}
         function resetForm() {
             if (confirm('Are you absolutely certain you wish to reset all parameter fields back to initial layout factory defaults?')) {
                 document.getElementById('promptForm').reset();
